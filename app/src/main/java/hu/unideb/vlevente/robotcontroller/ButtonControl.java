@@ -30,8 +30,9 @@ public class ButtonControl extends AppCompatActivity {
         Button btnLeft = findViewById(R.id.left);
         Button btnRight = findViewById(R.id.right);
         Button btnStop = findViewById(R.id.stop);
+        Button btnBack = findViewById(R.id.backBtn);
 
-        // Set onTouchListener for buttons
+        //* Set onTouchListener for forward button
         btnUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -48,6 +49,7 @@ public class ButtonControl extends AppCompatActivity {
             }
         });
 
+        //* Set onTouchListener for reverse button
         btnDown.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -64,6 +66,7 @@ public class ButtonControl extends AppCompatActivity {
             }
         });
 
+        //* Set onTouchListener for left button
         btnLeft.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -80,6 +83,7 @@ public class ButtonControl extends AppCompatActivity {
             }
         });
 
+        //* Set onTouchListener for right button
         btnRight.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -96,6 +100,7 @@ public class ButtonControl extends AppCompatActivity {
             }
         });
 
+        //* Set onClickListener for stop button
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,15 +110,23 @@ public class ButtonControl extends AppCompatActivity {
             }
         });
 
+        //* Set onClickListener for back button
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
-    //Create a function to add new text to log
+    //* Create a function to add new text to log
     public void logMe(String text) {
-        //Get time in hh:mm:ss format
+        //* Get time in hh:mm:ss format
         String time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
         LinearLayout log = findViewById(R.id.scrolllinearlayout);
         TextView tv = new TextView(this);
-        //If text is Stop, set color to red
+        //* If text is Stop, set color to red else green
         if(text.equals("Stop")) {
             tv.setTextColor(Color.RED);
         }else{

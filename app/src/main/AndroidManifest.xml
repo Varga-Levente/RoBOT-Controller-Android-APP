@@ -15,6 +15,10 @@
         android:theme="@style/Theme.RoBotController"
         tools:targetApi="31">
         <activity
+            android:name=".RotationControl"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".ButtonControl"
             android:exported="false"
             android:screenOrientation="landscape" />
