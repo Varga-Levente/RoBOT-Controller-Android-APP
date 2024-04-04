@@ -13,8 +13,6 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.longdo.mjpegviewer.MjpegView;
@@ -31,7 +29,7 @@ public class ButtonControl extends AppCompatActivity {
     Button btnUp, btnDown, btnLeft, btnRight, btnStop, btnBack;
     TextView botIP, version, devModeText, connText;
 
-    private boolean moving = false;
+    boolean moving = false;
 
     //* MJPEG stream viewer object
     private MjpegView viewer;
@@ -66,7 +64,7 @@ public class ButtonControl extends AppCompatActivity {
         }
 
         //* Get MJPEG stream viewer object
-        viewer = (MjpegView) findViewById(R.id.stream);
+        viewer = findViewById(R.id.stream);
 
         //* Set robot IP address text
         botIP = findViewById(R.id.robotIP);
@@ -83,90 +81,72 @@ public class ButtonControl extends AppCompatActivity {
         viewer.startStream();
 
         //* Set onTouchListener for forward button
-        btnUp.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    move("forward");
-                    logMe("Forward");
-                    moving = true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    move("stop");
-                    logMe("Stop");
-                    moving = false;
-                }
-                return true;
-            }
-        });
-
-        //* Set onTouchListener for reverse button
-        btnDown.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    move("backward");
-                    logMe("Reverse");
-                    moving = true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    move("stop");
-                    logMe("Stop");
-                    moving = false;
-                }
-                return true;
-            }
-        });
-
-        //* Set onTouchListener for left button
-        btnLeft.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    move("left");
-                    logMe("Left");
-                    moving = true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    move("stop");
-                    logMe("Stop");
-                    moving = false;
-                }
-                return true;
-            }
-        });
-
-        //* Set onTouchListener for right button
-        btnRight.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    move("right");
-                    logMe("Right");
-                    moving = true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    move("stop");
-                    logMe("Stop");
-                    moving = false;
-                }
-                return true;
-            }
-        });
-
-        //* Set onClickListener for stop button
-        btnStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnUp.setOnTouchListener((v, event) -> {
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                move("forward");
+                logMe("Forward");
+                moving = true;
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 move("stop");
                 logMe("Stop");
                 moving = false;
             }
+            return true;
+        });
+
+        //* Set onTouchListener for reverse button
+        btnDown.setOnTouchListener((v, event) -> {
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                move("backward");
+                logMe("Reverse");
+                moving = true;
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                move("stop");
+                logMe("Stop");
+                moving = false;
+            }
+            return true;
+        });
+
+        //* Set onTouchListener for left button
+        btnLeft.setOnTouchListener((v, event) -> {
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                move("left");
+                logMe("Left");
+                moving = true;
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                move("stop");
+                logMe("Stop");
+                moving = false;
+            }
+            return true;
+        });
+
+        //* Set onTouchListener for right button
+        btnRight.setOnTouchListener((v, event) -> {
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                move("right");
+                logMe("Right");
+                moving = true;
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                move("stop");
+                logMe("Stop");
+                moving = false;
+            }
+            return true;
+        });
+
+        //* Set onClickListener for stop button
+        btnStop.setOnClickListener(v -> {
+            move("stop");
+            logMe("Stop");
+            moving = false;
         });
 
         //* Set onClickListener for back button
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewer.stopStream();
-                finish();
-            }
+        btnBack.setOnClickListener(v -> {
+            viewer.stopStream();
+            finish();
         });
 
     }
@@ -203,23 +183,17 @@ public class ButtonControl extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Ha a válasz tartalmazza az "OK" szöveget, akkor sikeres
-                        if (response.contains("OK")) {
-                            logMe("[BOT] - OK");
-                        } else {
-                            logMe("[BOT] - Fail");
-                        }
+                response -> {
+                    // Ha a válasz tartalmazza az "OK" szöveget, akkor sikeres
+                    if (response.contains("OK")) {
+                        logMe("[BOT] - OK");
+                    } else {
+                        logMe("[BOT] - Fail");
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Hibakezelés
-                        logMe("[BOT] - Fail: " + error.getMessage());
-                    }
+                error -> {
+                    // Hibakezelés
+                    logMe("[BOT] - Fail: " + error.getMessage());
                 });
 
         // Kérelem hozzáadása a kérés sorhoz
@@ -227,41 +201,31 @@ public class ButtonControl extends AppCompatActivity {
     }
 
     //* Animate connecting text
+    @SuppressLint({"SetTextI18n", "ThreadSleepDuringRun"})
     @Override
     protected void onResume() {
         super.onResume();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean finished = false;
-                while (!isFinishing()) {
-                    try {
-                        for(int i=0; i<15; i++) {
-                            if (finished) {
-                                break;
-                            }
-                            Thread.sleep(500);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (connText.getText().toString().endsWith("...")) {
-                                        connText.setText("Connecting");
-                                    } else {
-                                        connText.setText(connText.getText().toString() + ".");
-                                    }
-                                }
-                            });
+        new Thread(() -> {
+            boolean finished = false;
+            while (!isFinishing()) {
+                try {
+                    for(int i=0; i<15; i++) {
+                        if (finished) {
+                            break;
                         }
-                        finished = true;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                connText.setText("Can't connect to camera");
+                        Thread.sleep(500);
+                        runOnUiThread(() -> {
+                            if (connText.getText().toString().endsWith("...")) {
+                                connText.setText("Connecting");
+                            } else {
+                                connText.setText(connText.getText().toString() + ".");
                             }
                         });
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
+                    finished = true;
+                    runOnUiThread(() -> connText.setText("Can't connect to camera"));
+                } catch (InterruptedException e) {
+                    System.out.println("ERROR: "+e.getMessage());
                 }
             }
         }).start();

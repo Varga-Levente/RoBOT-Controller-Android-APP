@@ -73,7 +73,7 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
         }
 
         //* Get MJPEG stream viewer object
-        viewer = (MjpegView) findViewById(R.id.stream);
+        viewer = findViewById(R.id.stream);
 
         //* Set MJPEG stream viewer settings
         viewer.setMode(MjpegView.MODE_FIT_WIDTH);
@@ -86,12 +86,9 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
         version.setText(version.getText().toString().replace("#.#", Objects.requireNonNull(getIntent().getStringExtra("VERSION"))));
 
         //* Handle back button on press (finish activity)
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewer.stopStream();
-                finish();
-            }
+        btnBack.setOnClickListener(v -> {
+            viewer.stopStream();
+            finish();
         });
 
         botIP.setText("IP: "+ipAddress);
@@ -104,38 +101,27 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         //* Start connection animation
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean finished = false;
-                while (!isFinishing()) {
-                    try {
-                        for(int i=0; i<15; i++) {
-                            if (finished) {
-                                break;
-                            }
-                            Thread.sleep(500);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (connText.getText().toString().endsWith("...")) {
-                                        connText.setText("Connecting");
-                                    } else {
-                                        connText.setText(connText.getText().toString() + ".");
-                                    }
-                                }
-                            });
+        new Thread(() -> {
+            boolean finished = false;
+            while (!isFinishing()) {
+                try {
+                    for(int i=0; i<15; i++) {
+                        if (finished) {
+                            break;
                         }
-                        finished = true;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                connText.setText("Can't connect to camera");
+                        Thread.sleep(500);
+                        runOnUiThread(() -> {
+                            if (connText.getText().toString().endsWith("...")) {
+                                connText.setText("Connecting");
+                            } else {
+                                connText.setText(connText.getText().toString() + ".");
                             }
                         });
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
+                    finished = true;
+                    runOnUiThread(() -> connText.setText("Can't connect to camera"));
+                } catch (InterruptedException e) {
+                    System.out.println("Error: " + e.getMessage());
                 }
             }
         }).start();
@@ -192,8 +178,8 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
             rightTextView.setText(rightText);
 
             DecimalFormat df = new DecimalFormat("#.##");
-            this.EH.setText("EH: " + df.format((double) accelerometerZ));
-            this.JB.setText("JB: " + df.format((double) accelerometerY));
+            this.EH.setText("EH: " + df.format(accelerometerZ));
+            this.JB.setText("JB: " + df.format(accelerometerY));
         }
     }
 
@@ -229,23 +215,17 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Ha a válasz tartalmazza az "OK" szöveget, akkor sikeres
-                        if (response.contains("OK")) {
-                            logMe("[BOT] - OK");
-                        } else {
-                            logMe("[BOT] - Fail");
-                        }
+                response -> {
+                    // Ha a válasz tartalmazza az "OK" szöveget, akkor sikeres
+                    if (response.contains("OK")) {
+                        logMe("[BOT] - OK");
+                    } else {
+                        logMe("[BOT] - Fail");
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Hibakezelés
-                        logMe("[BOT] - Fail: " + error.getMessage());
-                    }
+                error -> {
+                    // Hibakezelés
+                    logMe("[BOT] - Fail: " + error.getMessage());
                 });
 
         // Kérelem hozzáadása a kérés sorhoz
