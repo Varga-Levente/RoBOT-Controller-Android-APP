@@ -107,6 +107,6 @@ public class MainActivity extends AppCompatActivity {
         //* Validate private ip address using regex if valid return true or devmode is checked
         //! In the final version the devmode checkbox should be removed
         if (devMode.isChecked()) return false;
-        return IP.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$");
+        return !IP.matches("^(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|(172\\.(1[6-9]|2[0-9]|3[0-1])\\.\\d{1,3}\\.\\d{1,3})|(192\\.168\\.\\d{1,3}\\.\\d{1,3})$");
     }
 }
