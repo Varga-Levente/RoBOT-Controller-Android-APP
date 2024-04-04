@@ -24,6 +24,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 //TODO: Need to add http request to send commands to the robot
 
@@ -31,19 +32,16 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
-    private TextView forwardTextView;
-    private TextView backwardTextView;
-    private TextView leftTextView;
-    private TextView rightTextView;
-    private TextView EH;
-    private TextView JB;
-    private TextView botIP;
+    private TextView forwardTextView, backwardTextView, leftTextView, rightTextView, EH, JB, botIP, version, devModeText, connText;
     private Button btnBack;
 
     private String ipAddress;
 
     //* MJPEG stream viewer object
     private MjpegView viewer;
+
+    //* Last direction of the robot
+    private String lastDirection = "stop";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +61,16 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         btnBack = findViewById(R.id.backBtn);
+        version = findViewById(R.id.version);
+        devModeText = findViewById(R.id.devmodetext);
+        connText = findViewById(R.id.connectingtext);
+
+        //* Hide dev mode text if DEV_MODE is false
+        if(!getIntent().getBooleanExtra("DEV_MODE", true)){
+            devModeText.setVisibility(View.GONE);
+        }else {
+            connText.setVisibility(View.GONE);
+        }
 
         //* Get MJPEG stream viewer object
         viewer = (MjpegView) findViewById(R.id.stream);
@@ -73,6 +81,9 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
         viewer.setSupportPinchZoomAndPan(true);
         viewer.setUrl("http://"+ipAddress+":81/stream");
         viewer.startStream();
+
+        //* Set current version from main activity
+        version.setText(version.getText().toString().replace("#.#", Objects.requireNonNull(getIntent().getStringExtra("VERSION"))));
 
         //* Handle back button on press (finish activity)
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +102,43 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        //* Start connection animation
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean finished = false;
+                while (!isFinishing()) {
+                    try {
+                        for(int i=0; i<15; i++) {
+                            if (finished) {
+                                break;
+                            }
+                            Thread.sleep(500);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (connText.getText().toString().endsWith("...")) {
+                                        connText.setText("Connecting");
+                                    } else {
+                                        connText.setText(connText.getText().toString() + ".");
+                                    }
+                                }
+                            });
+                        }
+                        finished = true;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                connText.setText("Can't connect to camera");
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
     //* Register sensor listener on pause
@@ -110,54 +158,40 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            //* Get accelerometer values
             float accelerometerY = event.values[1];
             float accelerometerZ = event.values[2];
 
-            //* Set negative threshold status
-            String negativeThresholdSttaus = "⛔";
+            String currentDirection = "stop";
+            String forwardText = "⛔";
+            String backwardText = "⛔";
+            String leftText = "⛔";
+            String rightText = "⛔";
 
-            //* Set text views based on accelerometer values
-                //! this.forwardTextView.setText(accelerometerZ > 7.8 ? "⬆️" : negativeThresholdSttaus);
-            if(accelerometerZ > 7.8) {
-                this.forwardTextView.setText("⬆️");
-                move("forward");
-            } else {
-                this.forwardTextView.setText(negativeThresholdSttaus);
-                move("stop");
+            if (accelerometerZ > 7.8) {
+                currentDirection = "forward";
+                forwardText = "⬆️";
+            } else if (accelerometerZ < 2.5) {
+                currentDirection = "backward";
+                backwardText = "⬇️";
+            } else if (accelerometerY < -3.5) {
+                currentDirection = "left";
+                leftText = "⬅️";
+            } else if (accelerometerY >= 3.5) {
+                currentDirection = "right";
+                rightText = "➡️";
             }
 
-                //! this.backwardTextView.setText(accelerometerZ < 2.8 ? "⬇️" : negativeThresholdSttaus);
-            if(accelerometerZ < 2.5) {
-                this.backwardTextView.setText("⬇️");
-                move("backward");
-            } else {
-                this.backwardTextView.setText(negativeThresholdSttaus);
-                move("stop");
+            if (!currentDirection.equals(lastDirection)) {
+                move(currentDirection);
+                lastDirection = currentDirection;
             }
 
-                //! this.leftTextView.setText(accelerometerY < -3.5 ? "⬅️" : negativeThresholdSttaus);
-            if(accelerometerY < -3.5) {
-                this.leftTextView.setText("⬅️");
-                move("left");
-            } else {
-                this.leftTextView.setText(negativeThresholdSttaus);
-                move("stop");
-            }
+            forwardTextView.setText(forwardText);
+            backwardTextView.setText(backwardText);
+            leftTextView.setText(leftText);
+            rightTextView.setText(rightText);
 
-                //! this.rightTextView.setText(accelerometerY >= 3.5 ? "➡️" : negativeThresholdSttaus);
-            if(accelerometerY >= 3.5) {
-                this.rightTextView.setText("➡️");
-                move("right");
-            } else {
-                this.rightTextView.setText(negativeThresholdSttaus);
-                move("stop");
-            }
-
-            //* Format accelerometer values
             DecimalFormat df = new DecimalFormat("#.##");
-
-            //* Set accelerometer values text views (EH and JB)
             this.EH.setText("EH: " + df.format((double) accelerometerZ));
             this.JB.setText("JB: " + df.format((double) accelerometerY));
         }
@@ -190,6 +224,7 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
     }
 
     private void move(String direction) {
+        System.out.println("[Rotation] Move: " + direction);
         String url = "http://" + ipAddress + "/action?go=" + direction;
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);

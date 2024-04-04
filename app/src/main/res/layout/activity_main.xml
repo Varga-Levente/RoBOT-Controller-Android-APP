@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="150dp"
+        android:layout_marginTop="30dp"
         android:backgroundTint="#0C6F9E"
         android:fontFamily="sans-serif-smallcaps"
         android:text="Button Control"
@@ -25,6 +26,7 @@
         android:id="@+id/rotCtrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="150dp"
         android:backgroundTint="#0C6F9E"
         android:fontFamily="sans-serif-smallcaps"
@@ -40,10 +42,11 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:rotationX="10"
-        android:text="RoBot"
-        android:textSize="48sp"
+        android:text="🕹️RoBot"
+        android:textColor="#ED3F3F"
+        android:textSize="50sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,15 +68,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="10dp"
-        android:text="Ver.: 0.3"
+        android:text="Ver.: #.#"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/coderName" />
 
     <EditText
         android:id="@+id/botIP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_width="245dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="15dp"
         android:ems="10"
         android:inputType="text"
         android:text="192.168.22.14"
@@ -83,19 +86,10 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="145dp"
-        android:text="RoBot IP:"
-        app:layout_constraintBottom_toTopOf="@+id/botIP"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="-10dp"
         android:rotationX="15"
         android:text="Remote controller"
@@ -107,10 +101,10 @@
         android:id="@+id/devmode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
         android:text="Developer mode"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/botIP" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/gitUrl"

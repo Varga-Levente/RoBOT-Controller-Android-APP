@@ -22,10 +22,14 @@ import com.longdo.mjpegviewer.MjpegView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 //TODO: Need to add http request to send commands to the robot
 
 public class ButtonControl extends AppCompatActivity {
+
+    Button btnUp, btnDown, btnLeft, btnRight, btnStop, btnBack;
+    TextView botIP, version, devModeText, connText;
 
     private boolean moving = false;
 
@@ -41,21 +45,35 @@ public class ButtonControl extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_button_control);
 
-        //* Get IP address from intent
+        //* Get extras from intent
         ipAddress = getIntent().getStringExtra("IP_ADDRESS");
 
-        Button btnUp = findViewById(R.id.forward);
-        Button btnDown = findViewById(R.id.reverse);
-        Button btnLeft = findViewById(R.id.left);
-        Button btnRight = findViewById(R.id.right);
-        Button btnStop = findViewById(R.id.stop);
-        Button btnBack = findViewById(R.id.backBtn);
+        btnUp = findViewById(R.id.forward);
+        btnDown = findViewById(R.id.reverse);
+        btnLeft = findViewById(R.id.left);
+        btnRight = findViewById(R.id.right);
+        btnStop = findViewById(R.id.stop);
+        btnBack = findViewById(R.id.backBtn);
+        version = findViewById(R.id.version);
+        devModeText = findViewById(R.id.devmodetext);
+        connText = findViewById(R.id.connectingtext);
+
+        //* Hide dev mode text if DEV_MODE is false
+        if(!getIntent().getBooleanExtra("DEV_MODE", true)){
+            devModeText.setVisibility(View.GONE);
+        }else {
+            connText.setVisibility(View.GONE);
+        }
 
         //* Get MJPEG stream viewer object
         viewer = (MjpegView) findViewById(R.id.stream);
 
-        TextView botIP = findViewById(R.id.robotIP);
+        //* Set robot IP address text
+        botIP = findViewById(R.id.robotIP);
         botIP.setText(String.format("IP: %s", ipAddress));
+
+        //* Set current version from main activity
+        version.setText(version.getText().toString().replace("#.#", Objects.requireNonNull(getIntent().getStringExtra("VERSION"))));
 
         //* Set MJPEG stream viewer settings
         viewer.setMode(MjpegView.MODE_FIT_WIDTH);
@@ -207,4 +225,46 @@ public class ButtonControl extends AppCompatActivity {
         // Kérelem hozzáadása a kérés sorhoz
         requestQueue.add(stringRequest);
     }
+
+    //* Animate connecting text
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean finished = false;
+                while (!isFinishing()) {
+                    try {
+                        for(int i=0; i<15; i++) {
+                            if (finished) {
+                                break;
+                            }
+                            Thread.sleep(500);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (connText.getText().toString().endsWith("...")) {
+                                        connText.setText("Connecting");
+                                    } else {
+                                        connText.setText(connText.getText().toString() + ".");
+                                    }
+                                }
+                            });
+                        }
+                        finished = true;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                connText.setText("Can't connect to camera");
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
 }
