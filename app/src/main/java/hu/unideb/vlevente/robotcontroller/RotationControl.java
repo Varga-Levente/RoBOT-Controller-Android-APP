@@ -101,7 +101,7 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         //* Start connection animation
-        new Thread(() -> {
+        /*new Thread(() -> {
             boolean finished = false;
             while (!isFinishing()) {
                 try {
@@ -124,7 +124,7 @@ public class RotationControl extends AppCompatActivity implements SensorEventLis
                     System.out.println("Error: " + e.getMessage());
                 }
             }
-        }).start();
+        }).start();*/
     }
 
     //* Register sensor listener on pause

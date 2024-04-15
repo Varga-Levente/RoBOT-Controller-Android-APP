@@ -28,6 +28,18 @@
         </LinearLayout>
     </ScrollView>
 
+    <TextView
+        android:id="@+id/connectingtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connecting ..."
+        android:textSize="60sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/stream" />
+
     <com.longdo.mjpegviewer.MjpegView
         android:id="@+id/stream"
         android:layout_width="match_parent"
@@ -51,18 +63,6 @@
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="@+id/stream"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/connectingtext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Connecting ..."
-        android:textSize="60sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/stream" />
 
     <TextView
         android:id="@+id/robotIP"
@@ -166,9 +166,11 @@
         android:id="@+id/EH"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="20dp"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/stopTextView"
+        android:textColor="#B53E3E"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/leftTextView"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -176,10 +178,12 @@
         android:id="@+id/JB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="100dp"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="#B53E3E"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/rightTextView"
-        app:layout_constraintStart_toEndOf="@+id/stopTextView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button

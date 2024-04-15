@@ -201,7 +201,7 @@ public class ButtonControl extends AppCompatActivity {
     }
 
     //* Animate connecting text
-    @SuppressLint({"SetTextI18n", "ThreadSleepDuringRun"})
+    /*@SuppressLint({"SetTextI18n", "ThreadSleepDuringRun"})
     @Override
     protected void onResume() {
         super.onResume();
@@ -229,6 +229,6 @@ public class ButtonControl extends AppCompatActivity {
                 }
             }
         }).start();
-    }
+    }*/
 
 }
