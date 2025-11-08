@@ -11,11 +11,11 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     //* Global variables
-    private final String APP_VERSION = "0.5";
+    private final String APP_VERSION = "1.0 Rev.: fffff";
     private final String APP_DEFAULT_IP = "0.0.0.0";
 
     //* UI elements
-    Button btnCtrl, rotCtrl, gitUrlBtn;
+    Button btnCtrl, gitUrlBtn;
     EditText ipInput;
     TextView version;
 
@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnCtrl = findViewById(R.id.btnCtrl);
-        rotCtrl = findViewById(R.id.rotCtrl);
         gitUrlBtn = findViewById(R.id.gitUrl);
         ipInput = findViewById(R.id.botIP);
         version = findViewById(R.id.version);
@@ -47,15 +46,6 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             openButtonControl();
-        });
-
-        //* This method handles the "rotation control" button press
-        rotCtrl.setOnClickListener(v -> {
-            if (validateIP(ipInput.getText().toString())) {
-                ipInput.setError("Invalid IP address");
-                return;
-            }
-            openRotationControl();
         });
 
         //* This method opens the github repository of the project on pressing the button
@@ -85,16 +75,6 @@ public class MainActivity extends AppCompatActivity {
     //* This method opens the button control activity
     public void openButtonControl(){
         Intent intent = new Intent(this, ButtonControl.class);
-        String ipAddress = devMode.isChecked() ? "127.0.0.1" :  ipInput.getText().toString();
-        intent.putExtra("IP_ADDRESS", ipAddress);
-        intent.putExtra("VERSION", APP_VERSION);
-        intent.putExtra("DEV_MODE", devModeState);
-        startActivity(intent);
-    }
-
-    //* This method opens the rotation control activity
-    public void openRotationControl(){
-        Intent intent = new Intent(this, RotationControl.class);
         String ipAddress = devMode.isChecked() ? "127.0.0.1" :  ipInput.getText().toString();
         intent.putExtra("IP_ADDRESS", ipAddress);
         intent.putExtra("VERSION", APP_VERSION);

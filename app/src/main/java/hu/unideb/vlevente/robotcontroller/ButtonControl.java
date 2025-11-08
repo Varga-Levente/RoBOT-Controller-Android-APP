@@ -26,10 +26,12 @@ import java.util.Objects;
 
 public class ButtonControl extends AppCompatActivity {
 
-    Button btnUp, btnDown, btnLeft, btnRight, btnStop, btnBack;
-    TextView botIP, version, devModeText, connText;
+    Button btnUp, btnDown, btnLeft, btnRight, btnStop, btnBack, btnSpeedFast, btnSpeedSlow, btnLight;
+    TextView botIP, version, devModeText, connText, speedText;
 
     boolean moving = false;
+
+    String current_speed = "fast";
 
     //* MJPEG stream viewer object
     private MjpegView viewer;
@@ -55,6 +57,13 @@ public class ButtonControl extends AppCompatActivity {
         version = findViewById(R.id.version);
         devModeText = findViewById(R.id.devmodetext);
         connText = findViewById(R.id.connectingtext);
+        btnSpeedFast = findViewById(R.id.btn_speed_fast);
+        btnSpeedSlow = findViewById(R.id.btn_speed_slow);
+        speedText = findViewById(R.id.tv_current_speed);
+        btnLight = findViewById(R.id.btn_led_ctrl);
+
+        current_speed = "fast";
+        speedText.setText("🚀");
 
         //* Hide dev mode text if DEV_MODE is false
         if(!getIntent().getBooleanExtra("DEV_MODE", true)){
@@ -149,6 +158,16 @@ public class ButtonControl extends AppCompatActivity {
             finish();
         });
 
+        btnSpeedSlow.setOnClickListener(v -> {
+            current_speed = "slow";
+            speedText.setText("🐌");
+        });
+
+        btnSpeedFast.setOnClickListener( v -> {
+            current_speed = "fast";
+            speedText.setText("🚀");
+        });
+
     }
 
     //* Create a function to add new text to log
@@ -179,25 +198,44 @@ public class ButtonControl extends AppCompatActivity {
     }
 
     private void move(String direction) {
-        String url = "http://" + ipAddress + "/action?go=" + direction;
+        String url = "http://" + ipAddress + "/action?go=" + direction + "&speed=" + current_speed;
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    // Ha a válasz tartalmazza az "OK" szöveget, akkor sikeres
-                    if (response.contains("OK")) {
-                        logMe("[BOT] - OK");
-                    } else {
-                        logMe("[BOT] - Fail");
-                    }
-                },
-                error -> {
-                    // Hibakezelés
-                    logMe("[BOT] - Fail: " + error.getMessage());
-                });
+        response -> {
+            // Ha a válasz tartalmazza az "OK" szöveget, akkor sikeres
+            if (response.contains("OK")) {
+                logMe("[BOT] - Move OK");
+            } else {
+                logMe("[BOT] - Move Fail");
+            }
+        },
+        error -> {
+            // Hibakezelés
+            logMe("[BOT] - Move Fail: " + error.getMessage());
+        });
 
         // Kérelem hozzáadása a kérés sorhoz
         requestQueue.add(stringRequest);
+    }
+
+    private void togglelights() {
+        String url = "http://" + ipAddress + "/action?toggleled=true";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        response -> {
+            // Ha a válasz tartalmazza az "OK" szöveget, akkor sikeres
+            if (response.contains("OK")) {
+                logMe("[BOT] - LED OK");
+            } else {
+                logMe("[BOT] - LED Fail");
+            }
+        },
+        error -> {
+            // Hibakezelés
+            logMe("[BOT] - LED Fail: " + error.getMessage());
+        });
     }
 
     //* Animate connecting text
