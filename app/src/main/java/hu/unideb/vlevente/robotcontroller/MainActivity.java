@@ -11,7 +11,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     //* Global variables
-    private final String APP_VERSION = "1.0 Rev.: fffff";
+    private final String APP_VERSION = "1.1 Rev.: 0012";
     private final String APP_DEFAULT_IP = "0.0.0.0";
 
     //* UI elements

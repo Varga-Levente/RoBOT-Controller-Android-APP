@@ -90,35 +90,19 @@
         android:layout_width="1000dp"
         android:layout_height="401dp"
         android:layout_marginTop="100dp"
-        app:constraint_referenced_ids="imageView3,textView3"
+        app:constraint_referenced_ids="imageView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="132dp"
-        android:layout_height="147dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="15dp"
+        android:layout_width="261dp"
+        android:layout_height="249dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:fontFamily="sans-serif"
-        android:rotationX="10"
-        android:text="Magic       Smoke"
-        android:textColor="#E35338"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:srcCompat="@drawable/logo_new" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
